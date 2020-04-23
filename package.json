@@ -1,0 +1,27 @@
+{
+  "name": "shri-infrastructure",
+  "version": "1.0.0",
+  "description": "",
+  "main": ".eslintrc.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/frontstall/shri-infrastructure.git"
+  },
+  "keywords": [],
+  "author": "frontstall",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/frontstall/shri-infrastructure/issues"
+  },
+  "homepage": "https://github.com/frontstall/shri-infrastructure#readme",
+  "devDependencies": {
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.1.0",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-jest": "^23.8.2",
+    "jest": "^25.4.0"
+  }
+}
