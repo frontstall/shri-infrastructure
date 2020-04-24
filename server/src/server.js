@@ -3,14 +3,13 @@ import path from 'path';
 import Express from 'express';
 import morgan from 'morgan';
 
-import createApi from './api/serverApi';
-import Builder from './Builder';
+import createApi from './api/storageApi';
 import { ROUTES } from './routes';
 
 const initServer = ({
   port,
-  serverHost,
-  serverPort,
+  apiBaseUrl,
+  apiToken,
 }) => {
   const app = new Express();
   const logger = morgan('combined');
@@ -23,25 +22,14 @@ const initServer = ({
     next();
   });
 
-  const api = createApi();
+  const api = createApi(apiBaseUrl, apiToken);
 
-  app.post(ROUTES.build, async (req, res) => {
+  app.post(ROUTES.notify, async (req, res) => {
     const {
       id,
-      repoUrl,
-      commitHash,
-      buildCommand,
+      buildLog,
+      status,
     } = req.body;
-
-    const serverBaseUrl = path.join(serverHost, serverPort);
-
-    const builder = new Builder(api, serverBaseUrl);
-    builder.start({
-      id,
-      repoUrl,
-      commitHash,
-      buildCommand,
-    });
 
     res.send(200).end();
   });

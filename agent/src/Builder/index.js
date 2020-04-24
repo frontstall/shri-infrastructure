@@ -19,6 +19,7 @@ class Builder {
   }
 
   async start({
+    id,
     repoUrl,
     commitHash,
     buildCommand,
@@ -42,7 +43,7 @@ class Builder {
     }
 
     try {
-      await this.api.notifyServer({ buildLog: log.join('\n'), status });
+      await this.api.notifyServer({ id, buildLog: log.join('\n'), status });
     } catch (error) {
       console.error(error);
     }

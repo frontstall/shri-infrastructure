@@ -1,18 +1,16 @@
 // @ts-check
-import axios from 'axios';
-import path from 'path';
+import getCallApi from '../utils/callApi';
+import { REQUEST_ROUTES } from '../routes';
 
-const createApi = (baseUrl, requestHandler = axios) => {
-  const getUrl = (apiUrl) => path.join(baseUrl, apiUrl);
+const createApi = (baseUrl) => {
+  const callApi = getCallApi(baseUrl);
   return {
-    async notifyServer(data) {
-      const url = getUrl('/notify_build_result');
-
-      try {
-        await requestHandler.post(url, data);
-      } catch (error) {
-        console.error(error);
-      }
+    notifyServer(data) {
+      return callApi({
+        method: 'POST',
+        url: REQUEST_ROUTES.notify,
+        data,
+      });
     },
   };
 };
