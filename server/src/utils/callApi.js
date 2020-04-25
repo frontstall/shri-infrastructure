@@ -1,12 +1,11 @@
 import axios from 'axios';
 import https from 'https';
 
-const getCallApi = (baseURL, apiToken) => ({
+export const getStorageCallApi = (baseURL, apiToken) => ({
   method,
   url,
   data = {},
   params = {},
-// eslint-disable-next-line consistent-return
 }) => {
   axios.defaults.httpsAgent = new https.Agent({ rejectUnauthorized: false });
   axios.defaults.baseURL = baseURL;
@@ -20,4 +19,18 @@ const getCallApi = (baseURL, apiToken) => ({
   });
 };
 
-export default getCallApi;
+export const getAgentCallApi = (baseURL) => ({
+  method,
+  url,
+  data = {},
+  params = {},
+}) => {
+  axios.defaults.baseURL = baseURL;
+
+  return axios({
+    method,
+    url,
+    data,
+    params,
+  });
+};

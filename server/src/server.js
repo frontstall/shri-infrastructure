@@ -1,16 +1,11 @@
 // @ts-check
-import path from 'path';
 import Express from 'express';
 import morgan from 'morgan';
 
-import createApi from './api/storageApi';
 import { ROUTES } from './routes';
+import getId from './utils/getId';
 
-const initServer = ({
-  port,
-  apiBaseUrl,
-  apiToken,
-}) => {
+const initServer = (port, queue) => {
   const app = new Express();
   const logger = morgan('combined');
   app.use(logger);
@@ -22,16 +17,22 @@ const initServer = ({
     next();
   });
 
-  const api = createApi(apiBaseUrl, apiToken);
-
-  app.post(ROUTES.notify, async (req, res) => {
-    const {
-      id,
-      buildLog,
-      status,
-    } = req.body;
+  app.post(ROUTES.buildResult, async (req, res) => {
+    try {
+      await queue.finishBuild(req.body);
+    } catch (error) {
+      console.error(error);
+    }
 
     res.send(200).end();
+  });
+
+  app.post(ROUTES.registerAgent, (req, res) => {
+    const { host, port: agentPort } = req.body;
+    const agentId = getId();
+    queue.addAgent({ agentId, host, port: agentPort });
+
+    res.send({ agentId }).end();
   });
 
   app.use((error, req, res, next) => { //eslint-disable-line

@@ -3,7 +3,8 @@ export const ROUTES = {
 };
 
 export const REQUEST_ROUTES = {
-  notify: '/notify_build_result',
+  register: '/notify-agent',
+  sendBuildResult: '/notify-build-result',
 };
 
 export default ROUTES;

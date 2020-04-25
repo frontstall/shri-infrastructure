@@ -5,17 +5,15 @@ import fs from 'fs';
 import os from 'os';
 import childProcess from 'child_process';
 
-import ROUTES from '../routes';
-
 const exec = util.promisify(childProcess.exec);
 const mkdtemp = util.promisify(fs.mkdtemp);
 
 
 class Builder {
-  constructor(api, serverBaseUrl) {
-    this.apiUrl = path.join(serverBaseUrl, ROUTES.notify);
+  constructor(api, agentId) {
     this.tempDir = os.tmpdir();
     this.api = api;
+    this.agentId = agentId;
   }
 
   async start({
@@ -26,6 +24,7 @@ class Builder {
   }) {
     const log = [];
     let status;
+    const start = new Date();
 
     try {
       const repoDir = await mkdtemp(`${this.tempDir}${path.sep}`);
@@ -42,8 +41,17 @@ class Builder {
       status = code;
     }
 
+    const finish = new Date();
+    const duration = finish.getTime() - start.getTime();
+
     try {
-      await this.api.notifyServer({ id, buildLog: log.join('\n'), status });
+      await this.api.sendBuildResult({
+        agentId: this.agentId,
+        id,
+        buildLog: log.join('\n'),
+        status,
+        duration,
+      });
     } catch (error) {
       console.error(error);
     }

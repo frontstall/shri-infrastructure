@@ -2,9 +2,9 @@
 import fs from 'fs';
 import path from 'path';
 
-import initServer from './server';
+import startApp from './app';
 
 const pathToConfig = path.resolve(__dirname, '..', 'server-conf.json');
 const config = JSON.parse(fs.readFileSync(pathToConfig));
 
-initServer(config);
+startApp(config);

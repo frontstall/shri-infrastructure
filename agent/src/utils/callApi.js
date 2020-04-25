@@ -3,9 +3,8 @@ import axios from 'axios';
 const getCallApi = (baseURL) => ({
   method,
   url,
-  data,
-  params,
-// eslint-disable-next-line consistent-return
+  data = {},
+  params = {},
 }) => {
   axios.defaults.baseURL = baseURL;
 

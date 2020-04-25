@@ -1,5 +1,10 @@
 export const ROUTES = {
-  notify: '/notify-build-result',
+  registerAgent: '/notify-agent',
+  buildResult: '/notify-build-result',
+};
+
+export const AGENT_ROUTES = {
+  build: './build',
 };
 
 export const STORAGE_ROUTES = {
