@@ -11,7 +11,9 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npx nodemon --exec babel-node ./src/index.js"
+    "start": "npx nodemon --exec babel-node ./src/index.js",
+    "build": "NODE_ENV=production babel src --out-dir dist --source-maps inline",
+    "start:prod": "node ./dist/index.js"
   },
   "keywords": [],
   "author": "frontstall",

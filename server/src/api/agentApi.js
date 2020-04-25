@@ -5,9 +5,10 @@ const createApi = (baseUrl) => {
   const callApi = getAgentCallApi(baseUrl);
   return {
     build(data) {
-      callApi({
+      console.log('===============>', data);
+      return callApi({
         method: 'POST',
-        url: AGENT_ROUTES.string,
+        url: AGENT_ROUTES.build,
         data,
       });
     },

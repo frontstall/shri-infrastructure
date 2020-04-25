@@ -19,6 +19,10 @@ const initServer = (port, queue) => {
 
   app.post(ROUTES.buildResult, async (req, res) => {
     try {
+      console.log(`Sending build result:
+      buildId is ${req.body.id},
+      status is ${req.body.status},
+      log is ${req.body.buildLog}`);
       await queue.finishBuild(req.body);
     } catch (error) {
       console.error(error);
@@ -31,7 +35,7 @@ const initServer = (port, queue) => {
     const { host, port: agentPort } = req.body;
     const agentId = getId();
     queue.addAgent({ agentId, host, port: agentPort });
-
+    console.log(`agent ${agentId} connected`);
     res.send({ agentId }).end();
   });
 

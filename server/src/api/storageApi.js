@@ -43,6 +43,13 @@ const createApi = (baseUrl, apiToken) => {
         },
       });
     },
+
+    getConfig() {
+      return callApi({
+        method: 'GET',
+        url: STORAGE_ROUTES.config,
+      });
+    },
   };
 };
 

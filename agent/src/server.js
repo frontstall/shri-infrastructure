@@ -28,7 +28,7 @@ const initServer = ({
       commitHash,
       buildCommand,
     } = req.body;
-
+    console.log(`Task recieved: ${id}, ${repoUrl}, ${commitHash}, ${buildCommand}}`);
     const builder = new Builder(api, agentId);
     builder.start({
       id,
@@ -37,7 +37,7 @@ const initServer = ({
       buildCommand,
     });
 
-    res.send(200).end();
+    res.status(200).end();
   });
 
   app.use((error, req, res, next) => { //eslint-disable-line

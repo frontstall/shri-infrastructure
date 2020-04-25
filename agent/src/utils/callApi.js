@@ -3,8 +3,7 @@ import axios from 'axios';
 const getCallApi = (baseURL) => ({
   method,
   url,
-  data = {},
-  params = {},
+  data,
 }) => {
   axios.defaults.baseURL = baseURL;
 
@@ -12,7 +11,6 @@ const getCallApi = (baseURL) => ({
     method,
     url,
     data,
-    params,
   });
 };
 

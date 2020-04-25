@@ -9,23 +9,36 @@ const AGENT_STATES = {
   building: 'building',
 };
 
-const CHECK_INTERVAL = 5000;
+const CHECK_INTERVAL = 10000;
 
-const filterBuilds = (builds) => builds.filter(
-  ({ status }) => Object.values(STATUSES_TO_BUILD).includes(status),
+const filterBuilds = (builds, exeptionList = []) => builds.filter(
+  ({ status, id }) => Object.values(STATUSES_TO_BUILD).includes(status)
+    && !exeptionList.includes(id),
 );
 
 class Queue {
-  constructor(api) {
+  constructor(api, config) {
+    const {
+      repoName,
+      buildCommand,
+    } = config;
+
+    console.log('config is');
+    console.log(config);
+
     this.api = api;
     this.builds = [];
     this.agents = {};
     this.timerId = null;
+    this.repoName = repoName;
+    this.buildCommand = buildCommand;
   }
 
   async fetchBuilds() {
     const builds = await this.api.getBuilds();
-    this.builds = filterBuilds(builds);
+    const exeptionList = Object.values(this.agents)
+      .reduce((acc, { buildId }) => (buildId ? [...acc, buildId] : acc), []);
+    this.builds = filterBuilds(builds, exeptionList);
   }
 
   start() {
@@ -37,27 +50,20 @@ class Queue {
         return;
       }
 
-      if (!this.builds.length < idleAgents.length) {
+      if (this.builds.length < idleAgents.length) {
         await this.fetchBuilds();
-        const promises = idleAgents.reduce((acc, agent) => {
-          const {
-            agentId,
-            id,
-            repoUrl,
-            commitHash,
-            buildCommand,
-          } = agent;
-          const build = this.builds.shift();
-          return build ? [...acc, this.startBuild({
-            agentId,
-            id,
-            repoUrl,
-            commitHash,
-            buildCommand,
-          })] : acc;
-        }, []);
-        Promise.all(promises).catch(console.error);
       }
+
+      const promises = idleAgents.reduce((acc, agent) => {
+        const { agentId } = agent;
+        const build = this.builds.shift();
+        return build ? [...acc, this.startBuild({
+          agentId,
+          id: build.id,
+          commitHash: build.commitHash,
+        })] : acc;
+      }, []);
+      Promise.all(promises).catch(console.error);
     }, CHECK_INTERVAL);
   }
 
@@ -77,9 +83,7 @@ class Queue {
   async startBuild({
     agentId,
     id: buildId,
-    repoUrl,
     commitHash,
-    buildCommand,
   }) {
     const agent = this.agents[agentId];
 
@@ -90,9 +94,9 @@ class Queue {
       const agentApi = createApi(agent.baseUrl);
       await agentApi.build({
         id: buildId,
-        repoUrl,
+        repoUrl: this.repoName,
         commitHash,
-        buildCommand,
+        buildCommand: this.buildCommand,
       });
       await this.api.startBuild({ dateTime: buildStartTime, buildId });
       this.builds = this.builds.filter(({ id }) => id !== buildId);
@@ -116,11 +120,11 @@ class Queue {
       await this.api.finishBuild({
         buildId: id,
         duration,
-        success: status === 1,
+        success: parseInt(status, 10) === 0,
         buildLog,
       });
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
 
     agent.state = AGENT_STATES.idle;

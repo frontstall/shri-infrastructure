@@ -4,11 +4,12 @@ export const ROUTES = {
 };
 
 export const AGENT_ROUTES = {
-  build: './build',
+  build: '/build',
 };
 
 export const STORAGE_ROUTES = {
   buildList: '/build/list',
   startBuild: '/build/start',
   finishBuild: '/build/finish',
+  config: '/conf',
 };

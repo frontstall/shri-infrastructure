@@ -4,33 +4,43 @@ import https from 'https';
 export const getStorageCallApi = (baseURL, apiToken) => ({
   method,
   url,
-  data = {},
-  params = {},
+  data,
+  params,
 }) => {
   axios.defaults.httpsAgent = new https.Agent({ rejectUnauthorized: false });
   axios.defaults.baseURL = baseURL;
   axios.defaults.headers.common.Authorization = `Bearer ${apiToken}`;
 
-  return axios({
-    method,
-    url,
-    data,
-    params,
-  });
+  const request = { method, url };
+
+  if (data) {
+    Object.assign(request, { data });
+  }
+
+  if (params) {
+    Object.assign(request, { params });
+  }
+
+  return axios(request);
 };
 
 export const getAgentCallApi = (baseURL) => ({
   method,
   url,
-  data = {},
-  params = {},
+  data,
+  params,
 }) => {
   axios.defaults.baseURL = baseURL;
 
-  return axios({
-    method,
-    url,
-    data,
-    params,
-  });
+  const request = { method, url };
+
+  if (data) {
+    Object.assign(request, { data });
+  }
+
+  if (params) {
+    Object.assign(request, { params });
+  }
+
+  return axios(request);
 };
