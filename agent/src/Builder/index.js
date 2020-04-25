@@ -30,7 +30,7 @@ class Builder {
       const repoDir = await mkdtemp(`${this.tempDir}${path.sep}`);
       await exec(`git clone ${repoUrl} ${repoDir}`);
       await exec(`cd ${repoDir} && git checkout ${commitHash}`);
-      const buildLog = await exec(`cd ${repoDir} && ${buildCommand}`);
+      const buildLog = await exec(`cd ${repoDir} && npm ci && ${buildCommand}`);
       log.push(buildLog.stdout, buildLog.stderr);
       const testLog = await exec(`cd ${repoDir} && npm run test`);
       log.push(testLog.stdout, testLog.stderr);
